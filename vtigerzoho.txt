@@ -1,0 +1,45 @@
+//get challenge token api hit here
+response = invokeurl
+[
+	url :"https://domainname.com/webservice.php?operation=getchallenge&username=admin"
+	type :GET
+];
+info response;
+result1 = response.get("result");
+token = result1.get("token");
+info token;
+//write access token statically here
+accesstoken = "6fDi2P0V8d1gTILE";
+//zoho creator does not support md5 so do it on server anywhere and call that api here
+md5data = invokeurl
+[
+	url :"https://domainname.com/md5data.php?token=" + token + "&accessKey=" + accesstoken
+	type :GET
+	parameters:""
+];
+info md5data;
+finaltoken = md5data.get("token");
+info finaltoken;
+//login using acccess key
+//https://domainname.com/webservice.php
+response1 = invokeurl
+[
+	url :"https://domainname.com/webservice.php?operation=login&username=admin&accessKey=" + finaltoken
+	type :POST
+	parameters:""
+];
+info response1;
+//{"success":true,"result":{"sessionName":"202f364a5caf0f22a4acf","userId":"19x1","version":"0.22","vtigerVersion":"6.4.0"}}
+//get sessioname 
+sessionresult = response1.get("result");
+sessionname = sessionresult.get("sessionName");
+//create lead
+createdata = {"firstname":"anju","lastname":"dhman"};
+info "https://domainname.com/webservice.php?operation=create&sessionName=" + sessionname + "&elementType=Leads&element=" + createdata;
+response3 = invokeurl
+[
+	url :"https://domainname.com/webservice.php?operation=describe&sessionName=" + sessionname + "&elementType=Leads"
+	type :POST
+	parameters:""
+];
+info response3;
